@@ -1,7 +1,9 @@
 package com.sha.springbootbookseller.controller;
 
 import com.sha.springbootbookseller.model.Role;
+import com.sha.springbootbookseller.security.CustomUserDetailsService;
 import com.sha.springbootbookseller.security.SecurityConfig;
+import com.sha.springbootbookseller.security.jwt.JwtAuthorizationFilter;
 import com.sha.springbootbookseller.security.jwt.JwtProvider;
 import com.sha.springbootbookseller.service.IPurchaseHistoryService;
 import com.sha.springbootbookseller.util.SecurityUtils;
@@ -14,9 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
@@ -35,10 +40,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @date 23.07.2022
  * @time 14:36
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-//@Import(SecurityConfig.class)
-//@WebMvcTest(controllers = {PurchaseHistoryController.class})
+//@SpringBootTest
+//@AutoConfigureMockMvc
+//@Import(PurchaseHistoryController.class)
+@WithMockUser
+@WebMvcTest(controllers = {PurchaseHistoryController.class})
+@ContextConfiguration(classes = {PurchaseHistoryController.class, JwtProvider.class, JwtAuthorizationFilter.class})
 class PurchaseHistoryControllerTest
 {
     private static final String USERNAME = "f@gmail.com";
@@ -55,6 +62,9 @@ class PurchaseHistoryControllerTest
 
     @MockBean
     private IPurchaseHistoryService purchaseHistoryService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void getAllPurchasesOfUser() throws Exception
